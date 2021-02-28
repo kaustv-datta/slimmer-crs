@@ -3,6 +3,10 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { initializeCRSData } from './logic/DataLayer';
+
+// Load App data
+initializeCRSData();
 
 ReactDOM.render(
   <React.StrictMode>

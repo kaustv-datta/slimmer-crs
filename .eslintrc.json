@@ -27,7 +27,11 @@
           "extensions": [".js", ".jsx", ".ts", ".tsx"]
         }
       ],
-      "prettier/prettier": "error",
+      "prettier/prettier": [
+        "error", {
+          "endOfLine":"auto"
+        }
+      ],
       "no-param-reassign": 0,
       "import/extensions": [
         "error",
