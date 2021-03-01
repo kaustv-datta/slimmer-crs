@@ -50,6 +50,34 @@ function App() {
     });
   };
 
+  const returnCar = (customerId, wasDelayed) => {
+    setCrsData({
+      vehicles: crsData.vehicles.map((vehicle) => {
+        if (vehicle.id === selectedCar.id) {
+          return {
+            ...vehicle,
+            assignedAt: null,
+            assignedTo: null,
+            rentDuration: null,
+            isAvailable: true,
+          };
+        }
+        return vehicle;
+      }),
+      customers: crsData.customers.map((customer) => {
+        if (customer.idCard === customerId) {
+          return {
+            ...customer,
+            isAssigned: null,
+            balance: 0,
+            delays: wasDelayed ? customer.delays + 1 : customer.delays,
+          };
+        }
+        return customer;
+      }),
+    });
+  };
+
   return (
     <div className="App">
       {/* HEADER */}
@@ -96,54 +124,39 @@ function App() {
               </thead>
               <tbody>
                 {crsData.vehicles.length > 0 ? (
-                  crsData.vehicles
-                    .sort((a, b) => {
-                      // Keep unavailable cars at bottom
-                      if (a.isAvailable && b.isAvailable) {
-                        return 0;
-                      }
-                      if (a.isAvailable) {
-                        return -1;
-                      }
-                      return 1;
-                    })
-                    .map((vehicle) => (
-                      <tr key={vehicle.id}>
-                        <td>{vehicle.type}</td>
-                        <td>{vehicle.subType}</td>
-                        <td>{vehicle.assignedTo || 'Unassigned'}</td>
-                        <td>
-                          <Button
-                            variant={
-                              vehicle.isAvailable
-                                ? 'success'
-                                : 'outline-success'
-                            }
-                            disabled={!vehicle.isAvailable}
-                            onClick={() => {
-                              setSelectedCar(vehicle);
-                              setShowRentModel(true);
-                            }}
-                          >
-                            Rent
-                          </Button>{' '}
-                          <Button
-                            disabled={vehicle.isAvailable}
-                            variant={
-                              vehicle.isAvailable
-                                ? 'outline-warning'
-                                : 'warning'
-                            }
-                            onClick={() => {
-                              setSelectedCar(vehicle);
-                              setShowReturnModel(true);
-                            }}
-                          >
-                            Return
-                          </Button>
-                        </td>
-                      </tr>
-                    ))
+                  crsData.vehicles.map((vehicle) => (
+                    <tr key={vehicle.id}>
+                      <td>{vehicle.type}</td>
+                      <td>{vehicle.subType}</td>
+                      <td>{vehicle.assignedTo || 'Unassigned'}</td>
+                      <td>
+                        <Button
+                          variant={
+                            vehicle.isAvailable ? 'success' : 'outline-success'
+                          }
+                          disabled={!vehicle.isAvailable}
+                          onClick={() => {
+                            setSelectedCar(vehicle);
+                            setShowRentModel(true);
+                          }}
+                        >
+                          Rent
+                        </Button>{' '}
+                        <Button
+                          disabled={vehicle.isAvailable}
+                          variant={
+                            vehicle.isAvailable ? 'outline-warning' : 'warning'
+                          }
+                          onClick={() => {
+                            setSelectedCar(vehicle);
+                            setShowReturnModel(true);
+                          }}
+                        >
+                          Return
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
                 ) : (
                   <tr>
                     <td colSpan="4">No Data Available</td>
@@ -180,7 +193,10 @@ function App() {
         handleClose={() => {
           setShowReturnModel(false);
         }}
-        handleReturn={(customerId, wasDelayed, balance) => {}}
+        handleReturn={(customerId, wasDelayed) => {
+          returnCar(customerId, wasDelayed);
+          setShowReturnModel(false);
+        }}
       />
     </div>
   );
